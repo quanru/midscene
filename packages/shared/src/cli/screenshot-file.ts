@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -50,7 +51,7 @@ export function writeCliScreenshotFile(
   const filename =
     options.id !== undefined
       ? `${safeScreenshotFilenamePart(options.id)}.${extension}`
-      : `${options.filenamePrefix ?? 'screenshot'}-${Date.now()}.${extension}`;
+      : `${options.filenamePrefix ?? 'screenshot'}-${Date.now()}-${randomUUID()}.${extension}`;
   const filePath = join(directory, filename);
 
   if (options.overwrite !== false || !existsSync(filePath)) {

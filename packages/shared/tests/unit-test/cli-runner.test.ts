@@ -666,7 +666,9 @@ describe('runToolsCLI', () => {
     const message = consoleSpy.mock.calls
       .map(([line]) => String(line))
       .find((line) => line.startsWith('Screenshot saved: '));
-    expect(message).toMatch(/^Screenshot saved: .+screenshot-\d+\.jpeg$/);
+    expect(message).toMatch(
+      /^Screenshot saved: .+screenshot-\d+-[0-9a-f-]{36}\.jpeg$/,
+    );
     const screenshotPath = message?.replace('Screenshot saved: ', '');
     expect(screenshotPath).toBeDefined();
     expect(existsSync(screenshotPath!)).toBe(true);
