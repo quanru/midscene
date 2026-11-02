@@ -1,0 +1,30 @@
+name: Image diff benchmark
+on:
+  push:
+    branches: [experiment/image-diff-benchmark]
+permissions:
+  contents: read
+jobs:
+  benchmark:
+    if: github.repository == 'quanru/midscene'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NX_DAEMON: 'false'
+      PUPPETEER_SKIP_DOWNLOAD: 'true'
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: ./.github/actions/setup-node-pnpm
+        with:
+          node-version: '24.21.0'
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm exec nx build @midscene/shared
+      - name: Run identical local benchmark on CI
+        run: node --expose-gc scripts/image-diff-benchmark/benchmark.cjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: image-diff-benchmark
+          path: benchmark-results
+          retention-days: 14
